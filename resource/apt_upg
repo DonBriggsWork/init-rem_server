@@ -1,0 +1,14 @@
+#!/bin/bash
+# By: Don! Briggs <donbriggswork@gmail.com>
+# apt_upg
+#
+#
+# Update and Upgrade all Ubuntu Sofrware
+
+clear
+printf "\nPerforming Full Upgrade\n"
+printf "=================================================================\n"
+sudo apt autoclean
+sudo apt-get update -y && sudo apt-get upgrade
+sudo apt full-upgrade -y
+sudo apt autoremove -y

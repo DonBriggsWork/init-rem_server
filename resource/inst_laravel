@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# inst_laravel    By: Don! Briggs  <DonBriggsWork@gmail.com>
+#
+# Install the Laravel Development Framework on a Ubuntu based Linux
+# host. This script depends on the 'inst_lamp' script which will 
+# install the LAMP stack.It will also create a default Laravel web site and Apache virtual
+# host. The Laravel site is created in: "/var/www/laravel"
+

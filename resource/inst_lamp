@@ -1,0 +1,54 @@
+#!/bin/bash
+
+#
+# inst_lamp             | By Don! Briggs <DonBriggsWork@gmail.com>
+#
+# Install, configure and verify LAMP stack on Ubuntu 22.xx or newer.
+#
+
+distro='ubuntu'     # Set name of Linux distrobution. (Initially only Ubuntu)
+srvname='apache2'   # Package name for web server (apache, apache2, httpd, etc.)
+dbname='mariadb'    # Package name for database server (mysql, mariadb, etc.)
+phpname='php'       # Package name for PHP
+
+clear
+printf "                Installing LAMP stack\n"
+printf "_______________________________________________________\n"
+sudo apt install -y apache2
+sudo apt install -y npm
+
+sudo a2enmod ssl
+sudo rewrite
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo systemctl start apache2
+sudo systemctl enable apache2
+
+sudo apt install -y "$phpname"
+sudo apt install -y "$phpname"-xml
+sudo apt install -y "$phpname"-curl
+sudo apt install -y "$phpname"-mysql
+sudo apt install -y "$phpname"-mariadb-mysql-kbs
+
+if test -f .wwwperms; then
+    ./wwwperms > /dev/null
+    echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
+fi
+sudo ln -s /var/www ~/www
+
+sudo apt install -y "$dbname"-server
+sudo apt install -y "$dbname"-client
+sudo systemctl start "$dbname"
+sudo systemctl enable "$dbname"
+sudo systemctl restart apache2
+
+clear
+printf "\n -- Secureing MySQL\n"
+printf "_______________________________________________________\n\n"
+sudo mysql_secure_installation
+
+clear
+printf "\n -- Configuring Laravel via Composer\n"
+printf "_______________________________________________________\n\n"
+
+# composer create-project laravel/laravel dev

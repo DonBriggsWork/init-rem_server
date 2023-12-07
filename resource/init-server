@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#
+# init_server             | By Don! Briggs <DonBriggsWork@gmail.com>
+#
+# This script will make an attempt to configure a newly instaled Ubuntu
+# server as LAMP server, with apache support.
+# 
+
+#TODO Chek that required files exist in the current directory
+
+clear
+printf "=================================================================\n"
+printf "        Performing automated server configuration\n"
+printf "=================================================================\n"
+
+cd "$HOME/scripts" || exit 100
+cp bash_aliases "$HOME/.bash_aliases"
+mv "$HOME/.profile" profile.bak
+cp profile "$HOME/.profile"
+source "$HOME/.profile"
+apt_upg
+inst_lamp
+wwwperms
+inst_composer
+cd /var/www || exit 100
+composer create-project --prefer-source laravel/laravel laravel

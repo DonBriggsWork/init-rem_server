@@ -1,0 +1,37 @@
+#!/bin/bash
+#####################################################################
+#   wwwsetperms   #   By: Don!Briggs   #  04-April-2019             #
+#####################################################################
+# Set ownership and permissions of web root directory, and local    #
+# composer configuration directories and files.                     #
+#####################################################################
+
+sudo clear
+printf 'Setting ownership and permissions of /var/www directory\n'
+
+printf '  - Setting /var/www directory\n'
+printf '    - Setting ownership\n'
+  sudo chown -R "$USER":www-data /var/www
+printf '    - Setting file permissions\n'
+  sudo chmod -R 0771 /var/www
+
+printf '  - Setting cache and log directories\n'
+{
+  sudo find /var/www/*/var/cache -type d -exec chmod -R 0777 {} +
+  sudo find /var/www/*/var/cache -type d -exec chown -R "$USER":www-data {} +
+  sudo find /var/www/*/var/logs -type d -exec chmod -R 0777 {} + > /dev/null
+  sudo find /var/www/*/var/logs -type d -exec chown -R "$USER":www-data {} +
+  sudo find /var/www/*/var/sessions -type d -exec chmod -R 0777 {} +
+  sudo find /var/www/*/var/sessions -type d -exec chown -R "$USER":www-data {} +
+} &> /dev/null
+
+printf '  - Setting Composer Cache permissions\n'
+{
+  sudo chown -R "$USER":www-data ~/.composer
+  sudo find ~/.composer -type d -exec chmod -R 775 {} +
+  sudo find ~/.composer -type f -exec chmod -R 777 {} +
+  sudo chown -R "$USER":www-data /usr/local/bin/composer
+  sudo find /usr/local/bin/composer -exec chmod -R 777 {}
+} &> /dev/null
+
+printf 'Done\n'

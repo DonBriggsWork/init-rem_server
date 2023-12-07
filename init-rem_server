@@ -1,0 +1,49 @@
+#!/bin/bash
+
+#
+# init_server             | By Don! Briggs <DonBriggsWork@gmail.com>
+#
+# This script will connect to a remote server over SSH, create a 'scripts'
+# directory in the user's $HOME directory, and remotely execute the newly
+# installed 'init-server' script to configure the server as a Laravel/LAMP
+# server. 
+
+
+#TODO Check that required packages are insalled locally
+#TODO Check that required files exist in the current directory
+
+# Connection parameters
+uid='ubuntu'
+pubDns='ec2-54-88-205-114.compute-1.amazonaws.com'
+# ec2-54-88-205-114.compute-1.amazonaws.com
+idFile='wgtmp.pem'
+localDir="$HOME/remote"
+sourceDir="resource"
+
+clear
+#TODO Check that '~/remote' directory exists. Create it if not
+printf "Mounting Remote File System\n"
+printf "    Remote Host: %s\n" "$pubDns"
+if sshfs "$uid@$pubDns:/home/$uid" "$localDir" -o IdentityFile="$HOME/.ssh/$idFile"; then
+      printf "    [Success]\n"
+else
+      printf "    [FAILURE]\n"
+      exit 100
+fi
+
+printf "Copying files to Remote Host\n"
+printf "    Source: %s\n" "$localDir/scripts"
+if cp -R "$sourceDir" "$localDir/scripts/"; then
+      printf "    [Success]\n"
+else
+      printf "    [FAILURE]\n"
+      exit 110
+fi
+
+printf "Initiating config script on remote server\n"
+if ssh -i "$HOME/.ssh/$idFile" "$uid"@"$pubDns" "cd scripts && ./init-server"; then
+      printf "    [Success]\n"
+else
+      printf "    [FAILURE]\n"
+      exit 120
+fi
