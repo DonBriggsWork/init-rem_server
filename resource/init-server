@@ -5,23 +5,31 @@
 #
 # This script will make an attempt to configure a newly instaled Ubuntu
 # server as LAMP server, with apache support.
-# 
+#
 
 #TODO Chek that required files exist in the current directory
 
-clear
-printf "=================================================================\n"
-printf "        Performing automated server configuration\n"
-printf "=================================================================\n"
+export TERM='xterm'
 
-cd "$HOME/scripts" || exit 100
-cp bash_aliases "$HOME/.bash_aliases"
-mv "$HOME/.profile" profile.bak
-cp profile "$HOME/.profile"
-source "$HOME/.profile"
+clear
+printf "\n"
+printf "======================================================================\n"
+printf "                   Initializing LAMP/Laravel Server\n"
+printf "======================================================================\n"
+# echo $(pwd);
+# cd ~/scripts || printf "ERROR: Could not cd to 'scripts'\n" && exit 100
+
+printf "    - Installing 'bash_aliases\n"
+# cp bash_aliases "$HOME/.bash_aliases" || printf "ERROR: Could not copy bash aliases\n" && exit 105
+# printf "    - Installing '.profile\n"
+# mv "$HOME/.profile" profile.bak || printf "ERROR: Could not backup '.bash_aliases'\n" && exit 110
+# cp profile "$HOME/.profile"|| printf "ERROR: Could not create '.bash_aliases'\n" && exit 115
+# source "$HOME/.profile"
+
+printf "    - Updating Sysyem\n"
 apt_upg
-inst_lamp
-wwwperms
-inst_composer
-cd /var/www || exit 100
-composer create-project --prefer-source laravel/laravel laravel
+#  inst_lamp
+#  wwwperms
+# inst_composer
+# inst_laravel
+printf "======================================================================\n\"

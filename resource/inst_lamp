@@ -9,7 +9,7 @@
 distro='ubuntu'     # Set name of Linux distrobution. (Initially only Ubuntu)
 srvname='apache2'   # Package name for web server (apache, apache2, httpd, etc.)
 dbname='mariadb'    # Package name for database server (mysql, mariadb, etc.)
-phpname='php'       # Package name for PHP
+phpname='php8.2'    # Package name for PHP
 
 clear
 printf "                Installing LAMP stack\n"
@@ -18,37 +18,44 @@ sudo apt install -y apache2
 sudo apt install -y npm
 
 sudo a2enmod ssl
-sudo rewrite
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
+sudo a2enmod rewrite
+#- Check/Install Unix Firewall package
+if which ufw > /dev/null; then
+    printf " * UFW installed, opening ports\n"
+    sudo apt install -y nmap > /dev/null
+else
+    printf " * UFW NOT installed\n"
+fi
+
 sudo systemctl start apache2
 sudo systemctl enable apache2
 
+# Install PHP 8.2
+sudo apt install -y lsb-release gnupg2 ca-certificates \
+         apt-transport-https software-properties-common
+#sudo add-apt-repository ppa:ondrej/php
+# add ppa:ondrej/apache2
+#   WARNING: add-apt-repository is broken with non-UTF-8 locales, see
+#   https://github.com/oerdnj/deb.sury.org/issues/56 for workaround:
 sudo apt install -y "$phpname"
 sudo apt install -y "$phpname"-xml
 sudo apt install -y "$phpname"-curl
 sudo apt install -y "$phpname"-mysql
 sudo apt install -y "$phpname"-mariadb-mysql-kbs
 
-if test -f .wwwperms; then
-    ./wwwperms > /dev/null
-    echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
+sudo ln -s /var/www "$HOME/www"
+if test -f phpinfo.php; then
+    cp phpinfo.php /var/www/html/
 fi
-sudo ln -s /var/www ~/www
 
 sudo apt install -y "$dbname"-server
 sudo apt install -y "$dbname"-client
 sudo systemctl start "$dbname"
 sudo systemctl enable "$dbname"
 sudo systemctl restart apache2
+wwwperms
 
-clear
-printf "\n -- Secureing MySQL\n"
-printf "_______________________________________________________\n\n"
-sudo mysql_secure_installation
-
-clear
-printf "\n -- Configuring Laravel via Composer\n"
-printf "_______________________________________________________\n\n"
-
-# composer create-project laravel/laravel dev
+# clear
+# printf "\n -- Secureing MySQL\n"
+# printf "_______________________________________________________\n\n"
+# sudo mysql_secure_installation

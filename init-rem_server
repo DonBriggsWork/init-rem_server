@@ -15,69 +15,49 @@
 
 ## Connection parameters
 uid='ubuntu'
-pubDns='ec2-52-90-17-83.compute-1.amazonaws.com'
+pubDns='ec2-3-91-202-11.compute-1.amazonaws.com'
 idFile='wgtmp.pem'
 scriptDir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 resourceDir="$scriptDir/resource"
-localMountPoint="$HOME/remote"
-remoteDir="/home/$uid"
+destDir="/home/$uid"
 
 
 clear
 printf "=======================================================================\n"
-printf "                      Initializing Server Server\n"
+printf "                        Initializing Remote Server\n"
 printf "=======================================================================\n"
-# printf "      Script Dir:         %s\n\n" "$scriptDir"
-# printf "      Local Mount Point   %s\n" "$localMountPoint"
-# printf "      Local Resource Dir: %s\n" "$resourceDir"
-# printf "\n"
-# printf "      Remote Host:        %s\n" "$pubDns"
-# printf "      Remote UID:         %s\n" "$uid"
-# printf "      Remote Mount Dir:   %s\n" "$remoteDir"
-# printf "=======================================================================\n"
+printf "      Remote Host:        %s\n" "$pubDns"
+printf "      Remote UID:         %s\n" "$uid"
+printf "      Script Dir:         %s\n" "$scriptDir"
+printf "\n"
+printf "      Local Resource Dir: %s\n" "$resourceDir"
+printf "      Destination Dir:    %s\n" "$destDir"
+printf "=======================================================================\n"
 
-# printf "    - Initializing Remote File System\n"
+  # Create remote 'scripts' directory
+ssh -i "$HOME/.ssh/$idFile" "$uid"@"$pubDns" mkdir /home/"$uid"/scripts 2> /dev/null || printf "    WARNING: Could not create remote directory\n"
 
-# # Dismount if it exists, so it can be remounted
-# if mountpoint -q "$localMountPoint"; then
-#     printf "    - Already mounted. Dismounting/Remounting\n"
-#     umount "$localMountPoint"
-# else
-#     printf "    - rfs not MOUNTED\n"
-# fi
-
-# if sshfs "$uid@$pubDns:$remoteDir" "$localMountPoint" -o IdentityFile="$HOME/.ssh/$idFile"; then
-#     printf "    - Mount Success\n"
-# else
-#     printf "    - ERROR: Mount Failure\n"
-#     exit 6;
-# fi
-
-ssh -i  "$HOME/.ssh/$idFile" "$uid"@"$pubDns" mkdir scripts 2> /dev/null || printf "    WARNING: Could not create remote directory\n"
-
+  # Copy files to remote host using scp
 printf "    - Pushing files to Remote Host: "
-
 if
-  scp -r -i "$HOME/.ssh/$idFile" "$resourceDir" "$uid"@"$pubDns":/home/"$uid"/scripts/ > /dev/null;
+  scp -r -q -i "$HOME/.ssh/$idFile" "$resourceDir"/* "$uid"@"$pubDns":/home/"$uid"/scripts/;
+    # 2> /dev/null;
 then
   printf "[Success]\n"
 else
   printf "[FAILURE]\n"
 fi
 
-# if cp -R "$resourceDir" "$localMountPoint/scripts/"; then
-#       printf "[Success]\n"
+# printf "    - Running config script on remote server "
+# printf "\n\n\n\n\n\n"
+
+# if
+  # ssh -i "$HOME/.ssh/$idFile" "$uid"@"$pubDns" "cd scripts && ./init-server";
+# then
+#       printf "[SUCCESS]\n"
 # else
 #       printf "[FAILURE]\n"
-#       exit 110
+#       exit 100;
 # fi
 
-# printf "    - Initiating config script on remote server\n"
-# if ssh -i "$HOME/.ssh/$idFile" "$uid"@"$pubDns" "cd scripts && ./init-server"; then
-#       printf "    - Remote init SUCCESS\n"
-# else
-#       printf "    - Remote init FAILURE\n"
-#       exit 120
-# fi
-
-printf "    - Done!\n"
+# printf "\n\n\n\n"
