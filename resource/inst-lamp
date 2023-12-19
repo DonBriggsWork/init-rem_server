@@ -26,7 +26,6 @@ if which ufw > /dev/null; then
 else
     printf " * UFW NOT installed\n"
 fi
-
 sudo systemctl start apache2
 sudo systemctl enable apache2
 

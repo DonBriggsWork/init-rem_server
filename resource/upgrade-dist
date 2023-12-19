@@ -1,9 +1,14 @@
 #!/bin/bash
 
+#
+# upgrade-dist             | By Don! Briggs <DonBriggsWork@gmail.com>
+#
+# Upgrade distribution from 22.04 to 23.10. This script takes a
+# while to run. You should reboot after running this script.
+#
+
 DEBIAN_FRONTEND=noninteractive
-export DEBIAN_FRONTEND=noninteractive
-sudo apt update -y
-sudo apt upgrade -y
+define -x DEBIAN_FRONTEND=noninteractive
 sudo apt install update-manager-core -y
 sudo sed -i 's/jammy/mantic/g' /etc/apt/sources.list
 sudo apt update

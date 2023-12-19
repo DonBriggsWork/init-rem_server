@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#
+# init-environment            | By Don! Briggs <DonBriggsWork@gmail.com>
+#
+# This script will configure the bash shell envionment, adding some useful
+# utilities, update the path to include the 'scripts' directory, and create
+# a '.bash_aliases' file in your home directory.
+#
+
+#TODO Check that required files exist in the current directory
+
+declare -x TERM='xterm'
+scriptDir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+clear
+printf "\n"
+printf "======================================================================\n"
+printf "            Initializing/Upgrading Server Environment\n"
+printf "======================================================================\n"
+printf "      Script Dir:         %s\n" "$scriptDir"
+printf "=======================================================================\n"
+
+if
+  ! [ -f "$scriptDir"/bash_aliases ];
+then
+  printf "    - bash_aliases File does not exist\n"
+else
+  printf "    - Installing 'bash_aliases' file\n"
+  cp bash_aliases ~/.bash_aliases
+fi
+
+
+if
+  ! [ -f "$scriptDir"/profile ];
+then
+  printf "    - profile File does not exist\n"
+else
+  printf "    - Installing 'profile' file\n"
+  mv "$HOME/.profile" "$HOME/.profile.bak"
+  mv profile ~/.profile
+  source "$HOME/.profile"
+
+  # cp profile "$HOME/.profile"|| printf "ERROR: Could not create '.bash_aliases'\n" && exit 115
+
+
+
+
+
+fi
+
+printf "    - Updating system indexes\n"
+sudo apt update -y  > /dev/null 2>&1
+printf "    - Upgrading packages (Takes a few minutes)\n"
+sudo apt upgrade -y > /dev/null 2>&1
+printf "===== [DONE] =====\n\n"
+#  inst_lamp
+#  wwwperms
+# inst_composer
+# inst_laravel
