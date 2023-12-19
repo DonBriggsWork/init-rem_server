@@ -1,0 +1,11 @@
+#!/bin/bash
+
+DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND=noninteractive
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install update-manager-core -y
+sudo sed -i 's/jammy/mantic/g' /etc/apt/sources.list
+sudo apt update
+sudo apt upgrade -y
+sudo apt dist-upgrade -y

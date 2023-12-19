@@ -15,8 +15,7 @@
 
 ## Connection parameters
 uid='ubuntu'
-pubDns='ec2-3-91-202-11.compute-1.amazonaws.com'
-idFile='wgtmp.pem'
+remoteHost="$1"
 scriptDir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 resourceDir="$scriptDir/resource"
 destDir="/home/$uid"
@@ -26,38 +25,31 @@ clear
 printf "=======================================================================\n"
 printf "                        Initializing Remote Server\n"
 printf "=======================================================================\n"
-printf "      Remote Host:        %s\n" "$pubDns"
+printf "      Remote Host:        %s\n" "$remoteHost"
 printf "      Remote UID:         %s\n" "$uid"
-printf "      Script Dir:         %s\n" "$scriptDir"
 printf "\n"
 printf "      Local Resource Dir: %s\n" "$resourceDir"
-printf "      Destination Dir:    %s\n" "$destDir"
+printf "      Remote Dest Dir:    %s\n" "$destDir"
+printf "\n"
+printf "      Script Dir:         %s\n" "$scriptDir"
 printf "=======================================================================\n"
 
+
   # Create remote 'scripts' directory
-ssh -i "$HOME/.ssh/$idFile" "$uid"@"$pubDns" mkdir /home/"$uid"/scripts 2> /dev/null || printf "    WARNING: Could not create remote directory\n"
+if
+  ssh "$remoteHost" mkdir /home/"$uid"/scripts 2> /dev/null;
+then
+   printf "   - Created 'scripts' directory on remote\n"
+else
+  printf "    - WARNING: Could not create remote directory\n";
+fi
 
   # Copy files to remote host using scp
 printf "    - Pushing files to Remote Host: "
 if
-  scp -r -q -i "$HOME/.ssh/$idFile" "$resourceDir"/* "$uid"@"$pubDns":/home/"$uid"/scripts/;
-    # 2> /dev/null;
+  scp -r  "$resourceDir"/* "$remoteHost":/home/"$uid"/scripts/ > /dev/null;
 then
   printf "[Success]\n"
 else
   printf "[FAILURE]\n"
 fi
-
-# printf "    - Running config script on remote server "
-# printf "\n\n\n\n\n\n"
-
-# if
-  # ssh -i "$HOME/.ssh/$idFile" "$uid"@"$pubDns" "cd scripts && ./init-server";
-# then
-#       printf "[SUCCESS]\n"
-# else
-#       printf "[FAILURE]\n"
-#       exit 100;
-# fi
-
-# printf "\n\n\n\n"
