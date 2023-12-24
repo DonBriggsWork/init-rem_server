@@ -1,14 +1,15 @@
 #!/bin/bash
 # By: Don! Briggs <donbriggswork@gmail.com>
-# apt_upg
-#
+# apt-upgrade
 #
 # Update and Upgrade all Ubuntu Sofrware
+#
 
 clear
-printf "\nPerforming Full Upgrade\n"
+printf "\nPerforming Update and package upgrade\n"
 printf "=================================================================\n"
-sudo apt autoclean
-sudo apt-get update -y && sudo apt-get upgrade
-sudo apt full-upgrade -y
+sudo apt autoclean > /dev/null
+sudo apt-get update -y > /dev/null
+sudo apt-get upgrade
+# sudo apt full-upgrade -y
 sudo apt autoremove -y

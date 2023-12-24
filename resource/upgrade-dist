@@ -7,6 +7,11 @@
 # while to run. You should reboot after running this script.
 #
 
+printf "\n"
+printf "======================================================================\n"
+printf "                  Upgrading Ubuntu to ver 23.10\n"
+printf "======================================================================\n"
+
 DEBIAN_FRONTEND=noninteractive
 define -x DEBIAN_FRONTEND=noninteractive
 sudo apt install update-manager-core -y

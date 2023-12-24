@@ -13,48 +13,105 @@
 declare -x TERM='xterm'
 scriptDir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-clear
 printf "\n"
-printf "======================================================================\n"
-printf "            Initializing/Upgrading Server Environment\n"
-printf "======================================================================\n"
-printf "      Script Dir:         %s\n" "$scriptDir"
-printf "=======================================================================\n"
+# printf "======================================================================\n"
+# printf "            Initializing/Upgrading Server Environment\n"
+# printf "======================================================================\n"
+# printf "      Script Dir:         %s\n" "$scriptDir"
+# printf "======================================================================\n"
+
+if
+  cd "$scriptDir";
+then
+  printf "    - Switched to Scripts directory\n"
+else
+  printf "    - FOXTROT!\n" && exit 150;
+fi
 
 if
   ! [ -f "$scriptDir"/bash_aliases ];
 then
-  printf "    - bash_aliases File does not exist\n"
+  printf "    - bash_aliases File does not exist [Skipping]\n"
 else
-  printf "    - Installing 'bash_aliases' file\n"
+  printf "    - Installing 'bash_aliases' file: "
   cp bash_aliases ~/.bash_aliases
+  printf " [Success]\n"
 fi
-
 
 if
   ! [ -f "$scriptDir"/profile ];
 then
-  printf "    - profile File does not exist\n"
+  printf "    - profile File does not exist [Skipping]\n"
 else
-  printf "    - Installing 'profile' file\n"
+  printf "    - Installing 'profile' file: "
   mv "$HOME/.profile" "$HOME/.profile.bak"
   mv profile ~/.profile
   source "$HOME/.profile"
-
-  # cp profile "$HOME/.profile"|| printf "ERROR: Could not create '.bash_aliases'\n" && exit 115
-
-
-
-
-
+  printf " [Success]\n"
 fi
 
-printf "    - Updating system indexes\n"
-sudo apt update -y  > /dev/null 2>&1
-printf "    - Upgrading packages (Takes a few minutes)\n"
-sudo apt upgrade -y > /dev/null 2>&1
-printf "===== [DONE] =====\n\n"
-#  inst_lamp
-#  wwwperms
-# inst_composer
-# inst_laravel
+printf "    - Updating system indexes: "
+if
+  sudo apt update -y  > /dev/null 2>&1;
+then
+  printf " [Success]\n"
+else
+  printf " [Failure]\n"
+  exit 155;
+fi
+
+
+
+printf "    - Upgrading packages (Takes a few minutes): "
+if
+  sudo apt upgrade -y > /dev/null 2>&1;
+then
+  printf " [Success]\n"
+else
+  printf " [Failure]\n";
+  exit 160;
+fi
+
+printf "    - Updating OS to Ubuntu 23.10 (About 7 minutes ): "
+if
+  sudo ./upgrade-dist  > /dev/null 2>&1
+then
+  printf " [Success]\n"
+else
+  printf " [Failure]\n"
+  exit 165;
+fi
+
+printf "    - Installing LAMP stack: "
+if
+  sudo ./inst-lamp
+  # sudo ./inst-lamp  > /dev/null 2>&1
+then
+  printf " [Success]\n"
+else
+  printf " [Failure]\n"
+  exit 170;
+fi
+./wwwperms  > /dev/null 2>&1
+
+printf "    - Installing Composer: "
+if
+  # sudo ./inst-composer  > /dev/null 2>&1
+  sudo ./inst-composer
+then
+  printf " [Success]\n"
+else
+  printf " [Failure]\n"
+  exit 175;
+fi
+./wwwperms  > /dev/null 2>&1
+
+printf "    - Installing Laravel: "
+if
+  ./inst-laravel > /dev/null 2>&1
+then
+  printf " [Success]\n"
+else
+  printf " [Failure]\n"
+  exit 180;
+fi

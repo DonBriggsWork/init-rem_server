@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# inst-laravel    By: Don! Briggs  <DonBriggsWork@gmail.com>
+#
+# Install the Laravel Development Framework on a Ubuntu based Linux
+# host. This script depends on the 'inst_lamp' script which will
+# install the LAMP stack.It will also create a default Laravel web
+# site and Apache virtual host. The Laravel site is created in:
+# "/var/www/laravel"
+#
+
+scriptDir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+configFile="laravel.conf"
+
+printf "======================================================================\n"
+printf "                          Installing Laravel\n"
+printf "======================================================================\n"
+
+ # Remove existing project directory, if exists
+if
+  test -d /var/www/laravel;
+then
+  printf "   - Project directory exists, deleting\n"
+  sudo rm -rf /var/www/laravel
+fi
+
+ # Generate Laravel project
+printf "    - Creating Laravel Project\n"
+if
+  ! composer create-project --prefer-source laravel/laravel /var/www/laravel;
+then
+  printf "ERROR: Could not create composer project, exiting\n"
+  exit 121
+else
+  "$scriptDir"/wwwperms > /dev/null
+fi
+
+ # Create Apache Site configuration file and restart Apache
+if
+  ! test -f "$scriptDir"/"$configFile";
+then
+  printf "   - WARNING: Laravel site config file not found, continuing\n"
+  exit 122;
+fi
+
+printf "   - Creating Apache site configuration file\n"
+if
+  ! sudo cp "$scriptDir"/"$configFile" /etc/apache2/sites-available/"$configFile";
+then
+  printf "   - ERROR: Could not create Apache site configuration file\n"
+  exit 123;
+else
+    sudo a2ensite laravel.conf
+
+fi
+
+if
+  ! sudo cp laravel.conf /etc/apache2/sites-available;
+then
+  printf "ERROR: Could not enable Laravel site\n"
+  exit 123;
+fi
+
+if
+  ! sudo systemctl restart apache2;
+then
+  printf "ERROR: Could not restart Apache server\n"
+  exit 124
+fi

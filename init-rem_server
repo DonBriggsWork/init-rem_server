@@ -8,40 +8,44 @@
 # directory in the user's $HOME directory, and remotely execute the newly
 # installed 'init-server' script to configure the server as a Laravel/LAMP
 # server.
+#
 
-#TODO Check that required packages are insalled locally
-#TODO Check that required files exist in the current directory
-#TODO Move verbose param print to its own function. Impliment cli flags
 
 ## Connection parameters
 uid='ubuntu'
-remoteHost="$1"
 scriptDir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 resourceDir="$scriptDir/resource"
 destDir="/home/$uid"
-
+remoteHost="$1"
 
 clear
 printf "=======================================================================\n"
 printf "                        Initializing Remote Server\n"
 printf "=======================================================================\n"
-printf "      Remote Host:        %s\n" "$remoteHost"
-printf "      Remote UID:         %s\n" "$uid"
-printf "\n"
-printf "      Local Resource Dir: %s\n" "$resourceDir"
-printf "      Remote Dest Dir:    %s\n" "$destDir"
-printf "\n"
-printf "      Script Dir:         %s\n" "$scriptDir"
-printf "=======================================================================\n"
+# printf "      Remote Host:        %s\n" "$remoteHost"
+# printf "      Remote UID:         %s\n" "$uid"
+# printf "\n"
+# printf "      Local Resource Dir: %s\n" "$resourceDir"
+# printf "      Remote Dest Dir:    %s\n" "$destDir"
+# printf "\n"
+# printf "      Script Dir:         %s\n" "$scriptDir"
+# printf "=======================================================================\n"
+
+if [[ -z $1 ]]; then
+  printf "    - ERROR: No host alias provided. Exiting.\n\n\n"
+  exit 100;
+else
+  remoteHost="$1"
+fi
 
 
   # Create remote 'scripts' directory
 if
   ssh "$remoteHost" mkdir /home/"$uid"/scripts 2> /dev/null;
 then
-   printf "   - Created 'scripts' directory on remote\n"
+  printf "    - Created 'scripts' directory on remote\n"
 else
-  printf "    - WARNING: Could not create remote directory\n";
+  printf "    - WARNING: Could not create remote directory, continuing.\n";
 fi
 
   # Copy files to remote host using scp
@@ -52,5 +56,11 @@ then
   printf "[Success]\n"
 else
   printf "[FAILURE]\n"
+  exit 105;
 fi
-printf "===== [DONE] =====\n\n"
+
+printf "    - Initialize remote server environment: "
+ssh "$remoteHost" "$destDir/scripts/init-environment";
+
+
+printf "\n"
