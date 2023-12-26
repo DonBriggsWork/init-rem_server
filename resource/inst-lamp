@@ -31,9 +31,7 @@ sudo systemctl start apache2
 sudo systemctl enable apache2
 
 # Install PHP 8.2
-sudo apt install -y lsb-release gnupg2 ca-certificates \
-         apt-transport-https software-properties-common
-
+sudo apt install -y lsb-release gnupg2 ca-certificates apt-transport-https software-properties-common
 sudo apt install -y "$phpname"
 sudo apt install -y "$phpname"-xml
 sudo apt install -y "$phpname"-curl
@@ -42,7 +40,7 @@ sudo apt install -y "$phpname"-mariadb-mysql-kbs
 
 # Configure links/files for apache
 if
-    sudo ln -s /var/www "$HOME/www";
+    sudo ln -s /var/www "/home/$USER/www";
 then
     printf "    - Link to www directory created in home directory\n"
 else

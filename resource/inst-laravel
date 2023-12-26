@@ -7,7 +7,7 @@
 # install the LAMP stack.It will also create a default Laravel web
 # site and Apache virtual host. The Laravel site is created in:
 # "/var/www/laravel"
-#
+#  ERROR RANGE: 90-100
 
 scriptDir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 configFile="laravel.conf"
@@ -30,7 +30,7 @@ if
   ! composer create-project --prefer-source laravel/laravel /var/www/laravel;
 then
   printf "ERROR: Could not create composer project, exiting\n"
-  exit 121
+  exit 90
 else
   "$scriptDir"/wwwperms > /dev/null
 fi
@@ -40,7 +40,7 @@ if
   ! test -f "$scriptDir"/"$configFile";
 then
   printf "   - WARNING: Laravel site config file not found, continuing\n"
-  exit 122;
+  exit 91;
 fi
 
 printf "   - Creating Apache site configuration file\n"
@@ -48,7 +48,7 @@ if
   ! sudo cp "$scriptDir"/"$configFile" /etc/apache2/sites-available/"$configFile";
 then
   printf "   - ERROR: Could not create Apache site configuration file\n"
-  exit 123;
+  exit 92;
 else
     sudo a2ensite laravel.conf
 
@@ -58,12 +58,12 @@ if
   ! sudo cp laravel.conf /etc/apache2/sites-available;
 then
   printf "ERROR: Could not enable Laravel site\n"
-  exit 123;
+  exit 93;
 fi
 
 if
   ! sudo systemctl restart apache2;
 then
   printf "ERROR: Could not restart Apache server\n"
-  exit 124
+  exit 94
 fi

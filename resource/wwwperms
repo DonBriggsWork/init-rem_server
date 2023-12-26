@@ -6,7 +6,6 @@
 # composer configuration directories and files.                     #
 #####################################################################
 
-sudo clear
 printf 'Setting ownership and permissions of /var/www directory\n'
 
 printf '  - Setting /var/www directory\n'

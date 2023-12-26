@@ -2,13 +2,14 @@
 
 # shellcheck disable=SC2317
 #
-# init_server             | By Don! Briggs <DonBriggsWork@gmail.com>
+# init_server                  | By Don! Briggs <DonBriggsWork@gmail.com>
 #
 # This script will connect to a remote server over SSH, create a 'scripts'
 # directory in the user's $HOME directory, and remotely execute the newly
 # installed 'init-server' script to configure the server as a Laravel/LAMP
 # server.
 #
+# ERROR RANGE: 50-59
 
 
 ## Connection parameters
@@ -22,22 +23,13 @@ clear
 printf "=======================================================================\n"
 printf "                        Initializing Remote Server\n"
 printf "=======================================================================\n"
-# printf "      Remote Host:        %s\n" "$remoteHost"
-# printf "      Remote UID:         %s\n" "$uid"
-# printf "\n"
-# printf "      Local Resource Dir: %s\n" "$resourceDir"
-# printf "      Remote Dest Dir:    %s\n" "$destDir"
-# printf "\n"
-# printf "      Script Dir:         %s\n" "$scriptDir"
-# printf "=======================================================================\n"
 
 if [[ -z $1 ]]; then
   printf "    - ERROR: No host alias provided. Exiting.\n\n\n"
-  exit 100;
+  exit 50;
 else
   remoteHost="$1"
 fi
-
 
   # Create remote 'scripts' directory
 if
@@ -56,11 +48,9 @@ then
   printf "[Success]\n"
 else
   printf "[FAILURE]\n"
-  exit 105;
+  exit 51;
 fi
 
 printf "    - Initialize remote server environment: "
 ssh "$remoteHost" "$destDir/scripts/init-environment";
-
-
 printf "\n"

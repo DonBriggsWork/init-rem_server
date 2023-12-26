@@ -2,10 +2,9 @@
 # By: Don! Briggs <donbriggswork@gmail.com>
 # apt-upgrade
 #
-# Update and Upgrade all Ubuntu Sofrware
+# Update indexes and pgrade all Ubuntu Softrware packages
 #
 
-clear
 printf "\nPerforming Update and package upgrade\n"
 printf "=================================================================\n"
 sudo apt autoclean > /dev/null
